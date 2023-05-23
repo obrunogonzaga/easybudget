@@ -2,19 +2,33 @@ const data = require('../model/budgetModel');
 
 exports.createBudget = (req, res) => {
   const budgetItem = req.body;
-  data.add(budgetItem);
-  res.json(budgetItem);
+  if (budgetItem) {
+    data.add(budgetItem);
+    res.json(budgetItem);
+  } else {
+    res.status(500).send("No budget item provided");
+  }
 };
 
-exports.getBudget = (req, res) => {
-  res.json(data.getAll());
+exports.getBudget = async (req, res) => {
+  try {
+    const result = await data.getAll();
+    res.json(result);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
 };
 
-exports.updateBudget = (req, res) => {
+exports.updateBudget = async (req, res) => {
   const id = Number(req.params.id);
   const budgetItem = req.body;
 
-  const updatedItem = data.update(id, budgetItem);
+  if (!budgetItem) {
+    res.status(400).send('Missing item data');
+    return;
+  }
+
+  const updatedItem = await data.update(id, budgetItem);
 
   if (updatedItem) {
     res.json(updatedItem);
@@ -23,12 +37,11 @@ exports.updateBudget = (req, res) => {
   }
 };
 
-exports.deleteBudget = (req, res) => {
+exports.deleteBudget = async (req, res) => {
   const id = Number(req.params.id);
+  const result = await data.delete(id);
 
-  const deleted = data.delete(id);
-
-  if (deleted) {
+  if (result[0].affectedRows === 1) {
     res.status(200).send('Item deleted');
   } else {
     res.status(404).send('Item not found');
