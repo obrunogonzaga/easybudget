@@ -6,7 +6,7 @@ exports.createBudget = (req, res) => {
     data.add(budgetItem);
     res.json(budgetItem);
   } else {
-    res.status(500).send("No budget item provided");
+    res.status(500).send('No budget item provided');
   }
 };
 

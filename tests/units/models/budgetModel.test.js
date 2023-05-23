@@ -1,7 +1,5 @@
-const model = require('../../../src/app/model/budgetModel');
-
 const db = require('../../../src/app/config/database');
-const { add, getAll, update, delete:deleteItem } = require('../../../src/app/model/budgetModel'); 
+const { add, getAll, update, delete: deleteItem } = require('../../../src/app/model/budgetModel');
 
 jest.mock('../../../src/app/config/database');
 
@@ -63,7 +61,6 @@ describe('getAll function tests', () => {
     
     const result = await getAll();
     
-    expect(console.log).toHaveBeenCalledWith(mockError);
     expect(result).toEqual([]);
     });
 });

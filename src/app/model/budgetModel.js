@@ -4,7 +4,7 @@ exports.add = async (item) => {
   // Validate input
   if (!item.category || !item.description || !item.amount || !item.date) {
     throw new Error(
-      'One or more required fields are missing. Required fields: category, description, amount, date'
+      'One or more required fields are missing. Required fields: category, description, amount, date',
     );
   }
   if (typeof item.amount !== 'number') {
@@ -15,7 +15,7 @@ exports.add = async (item) => {
   }
   const [rows] = await db.execute(
     'INSERT INTO budget (category, description, amount, date) VALUES (?, ?, ?, ?)',
-    [item.category, item.description, item.amount, item.date]
+    [item.category, item.description, item.amount, item.date],
   );
   return rows;
 };
@@ -25,15 +25,14 @@ exports.getAll = async () => {
     const [rows] = await db.execute('SELECT * FROM budget');
     return rows;
   } catch (err) {
-    console.log(err);
     return [];
   }
 };
 
-exports.update = async(id, item) => {
+exports.update = async (id, item) => {
   const [rows] = await db.execute(
     'UPDATE budget SET category = ?, description = ?, amount = ?, date = ? WHERE id = ?',
-    [item.category, item.description, item.amount, item.date, id]
+    [item.category, item.description, item.amount, item.date, id],
   );
 
   if (rows.affectedRows !== 1) {
