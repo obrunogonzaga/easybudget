@@ -14,7 +14,7 @@ Easy Budget é um projeto de API para um aplicativo de rastreamento de orçament
 ## Instalação
 
 1. Clone o repositório em sua máquina local:
-git clone https://github.com/seu-usuario/easy-budget.git
+git clone https://github.com/obrunogonzaga/easybudget.git
 
 2. Navegue até o diretório do projeto:
 ``cd easy-budget``
