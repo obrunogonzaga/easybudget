@@ -1,45 +1,62 @@
 const request = require('supertest');
 const express = require('express');
-const routes = require('../../../src/app/routes/budgetRoutes');
+const router = require('../../../src/app/routes/budgetRoutes');
+const controller = require('../../../src/app/controllers/budgetController');
+
+jest.mock('../../../src/app/controllers/budgetController');
+
 const app = express();
-
 app.use(express.json());
-app.use('/budget', routes);
+app.use(router);
 
-describe('Test /budget routes', () => {
-  test('POST /budget', async () => {
-    const newItem = { id: 1, name: 'Test item', price: 100 };
+describe('Budget Routes', () => {
+  let mockBudget;
 
-    const response = await request(app)
-      .post('/budget')
-      .send(newItem);
-
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toEqual(newItem);
+  beforeEach(() => {
+    mockBudget = { id: 1, category: 'test', description: 'test', amount: 100, date: '2023-05-23' };
   });
 
-  test('GET /budget', async () => {
-    const response = await request(app).get('/budget');
-
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toEqual(expect.arrayContaining([]));
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  test('PUT /budget/:id', async () => {
-    const updatedItem = { id: 1, name: 'Updated item', price: 200 };
+  test('POST /', async () => {
+    controller.createBudget.mockImplementation((req, res) => res.status(200).send(mockBudget));
 
-    const response = await request(app)
-      .put('/budget/1')
-      .send(updatedItem);
+    const response = await request(app).post('/').send(mockBudget);
 
     expect(response.statusCode).toBe(200);
-    expect(response.body).toEqual(updatedItem);
+    expect(response.body).toEqual(mockBudget);
+    expect(controller.createBudget).toHaveBeenCalled();
   });
 
-  test('DELETE /budget/:id', async () => {
-    const response = await request(app).delete('/budget/1');
+  test('GET /', async () => {
+    controller.getBudget.mockImplementation((req, res) => res.status(200).send([mockBudget]));
+
+    const response = await request(app).get('/');
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toEqual([mockBudget]);
+    expect(controller.getBudget).toHaveBeenCalled();
+  });
+
+  test('PUT /:id', async () => {
+    controller.updateBudget.mockImplementation((req, res) => res.status(200).send(mockBudget));
+
+    const response = await request(app).put(`/${mockBudget.id}`).send(mockBudget);
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toEqual(mockBudget);
+    expect(controller.updateBudget).toHaveBeenCalled();
+  });
+
+  test('DELETE /:id', async () => {
+    controller.deleteBudget.mockImplementation((req, res) => res.status(200).send('Item deleted'));
+
+    const response = await request(app).delete(`/${mockBudget.id}`);
 
     expect(response.statusCode).toBe(200);
     expect(response.text).toEqual('Item deleted');
+    expect(controller.deleteBudget).toHaveBeenCalled();
   });
 });
